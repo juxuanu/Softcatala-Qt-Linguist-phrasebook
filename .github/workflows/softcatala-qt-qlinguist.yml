@@ -7,6 +7,8 @@ on:
 
 jobs:
   descarregar-i-convertir:
+    permissions: write-all
+    environment: dev
     runs-on: ubuntu-latest
 
     steps:
@@ -43,3 +45,6 @@ jobs:
         name: qph-files
         path: |
           *.qph
+    - name: version
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      id: version

@@ -1,0 +1,45 @@
+name: Conversor de memòries de Softcatalà per Qt Linguist.
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  descarregar-i-convertir:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Carregar el repositori
+      uses: actions/checkout@v3
+
+    - name: Preparar el Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Instal·lar dependències
+      run: pip install docopt bs4 thefuzz
+
+    - name: Obtenir tmx2qph.py
+      run: |
+        wget https://raw.githubusercontent.com/Eloitor/tmx2qph/master/TMX2QPH.py
+
+    - name: Descarregar els fitxers TMX
+      run: |
+        wget https://static.softcatala.org/memories/abiword-tm.tmx.zip
+
+    - name: Descomprimir els fitxers TMX
+      run: |
+        unzip abiword-tm.tmx.zip
+
+    - name: Convertir els fitxers TMX a QPH
+      run: |
+        python TMX2QPH.py abiword-tm.tmx --output=abiword.qph
+
+    - name: Publicar els fitxers QPH
+      uses: actions/upload-artifact@v3
+      with:
+        name: qph-files
+        path: |
+          *.qph

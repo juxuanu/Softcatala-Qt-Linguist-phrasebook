@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  descarregar-i-convertir:
+  descarregar-convertir-i-pujar:
     permissions: write-all
     environment: dev
     runs-on: ubuntu-latest
@@ -35,16 +35,24 @@ jobs:
       run: |
         unzip abiword-tm.tmx.zip
 
-    - name: Convertir els fitxers TMX a QPH
+    - name: Convertir el fitxer TMX a QPH (versionat)
       run: |
-        python TMX2QPH.py abiword-tm.tmx --output=abiword.qph
+        python TMX2QPH.py abiword-tm.tmx --output=abiword-$(date +%s).qph
 
-    - name: Publicar els fitxers QPH
+    - name: Publicar els fitxers QPH com a artefactes
       uses: actions/upload-artifact@v3
       with:
         name: qph-files
         path: |
           *.qph
-    - name: version
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-      id: version
+
+    - name: Publicar els fitxers QPH a git
+      env: 
+        CI_COMMIT_MESSAGE: Actualizació automàtica per CI
+        CI_COMMIT_AUTHOR: Github CI
+      run: |
+        git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+        git config --global user.email "eloitor@users.noreply.github.com"
+        git add *.qph
+        git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
+        git push

@@ -10,7 +10,6 @@ jobs:
     permissions: write-all
     environment: dev
     runs-on: ubuntu-latest
-
     steps:
     - name: Carregar el repositori
       uses: actions/checkout@v3
